@@ -13,3 +13,9 @@ Eric Anderson
 * Pitt CS, 2024
 * ema85@pitt.edu
 * https://www.linkedin.com/in/ericanderson18/
+
+Luis Castellanos
+* Pitt CS and Electrical Engineering, 2024
+* ljc53@pitt.edu
+* www.linkedin.com/in/luis-castellanos0o0
+
