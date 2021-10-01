@@ -6,7 +6,7 @@ public class DisplayWindow extends JFrame {
 	private Canvas canvas;
 	private Game game;
 	
-	public DisplayWindow(int width, int height, Game game) {
+	public DisplayWindow(int width, int height, Game game, Input input) {
 		setTitle("Paint By Numbers");
 		setResizable(false);
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -16,6 +16,10 @@ public class DisplayWindow extends JFrame {
 		canvas.setPreferredSize(new Dimension(width, height));
 		canvas.setFocusable(false);
 		add(canvas);
+		addKeyListener(input);
+		addMouseListener(input);
+		addMouseMotionListener(input);
+		addMouseWheelListener(input);
 		pack();
 
 		this.game = game;
