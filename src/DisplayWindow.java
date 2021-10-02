@@ -40,6 +40,20 @@ public class DisplayWindow extends JFrame {
 		graphics.drawString("FPS: " + ((int) 60 / elapsedTime), canvas.getWidth() - 60, 15);
 		graphics.drawString("ZOOM: " + new DecimalFormat("#.##").format(game.zoom), 15, 15);
 		
+		PaintByNumber testImg = new PaintByNumber();
+		for (int x = 0; x < testImg.getWidth(); x++) {
+			for (int y = 0; y < testImg.getHeight(); y++) {
+				Color col = testImg.getColor(x, y);
+				graphics.setColor(col);
+				graphics.fillRect(x * 20 + 50, y * 20 + 50, 20, 20);
+				if (col == Color.LIGHT_GRAY) {
+					graphics.setColor(Color.BLACK);
+					graphics.drawRect(x * 20 + 50, y * 20 + 50, 20, 20);
+					graphics.drawString("" + testImg.getNumber(x, y), x * 20 + 57, y * 20 + 64);
+				}
+			}
+		}
+		
 		graphics.dispose();
 		bufferStrat.show();
 	}
