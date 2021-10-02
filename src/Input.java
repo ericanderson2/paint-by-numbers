@@ -5,12 +5,24 @@ public class Input implements KeyListener, MouseListener, MouseWheelListener, Mo
 	private MouseWheelEvent lastWheelEvent;
 	private MouseEvent lastDragEvent;
 	private MouseEvent lastMoveEvent;
+	private MouseEvent lastPressEvent;
+	private MouseEvent lastReleaseEvent;
 	
 	public Input() {
 		pressed = new boolean[255];
 		lastWheelEvent = null;
 		lastDragEvent = null;
 		lastMoveEvent = null;
+		lastPressEvent = null;
+		lastReleaseEvent = null;
+	}
+
+	public void mouseReleased(MouseEvent e) {
+		lastReleaseEvent = e;
+	}
+
+	public void mousePressed(MouseEvent e) {
+		lastPressEvent = e;
 	}
 
 	public void mouseWheelMoved(MouseWheelEvent e) {
@@ -31,6 +43,14 @@ public class Input implements KeyListener, MouseListener, MouseWheelListener, Mo
 		return lastWheelEvent;
 	}
 	
+	public MouseEvent getLastPressEvent() {
+		return lastPressEvent;
+	}
+	
+	public MouseEvent getLastReleaseEvent() {
+		return lastReleaseEvent;
+	}
+	
 	public MouseEvent getLastDragEvent() {
 		return lastDragEvent;
 	}
@@ -43,6 +63,8 @@ public class Input implements KeyListener, MouseListener, MouseWheelListener, Mo
 		lastWheelEvent = null;
 		lastDragEvent = null;
 		lastMoveEvent = null;
+		lastPressEvent = null;
+		lastReleaseEvent = null;
 	}
 	
 //key input handling
@@ -62,6 +84,4 @@ public class Input implements KeyListener, MouseListener, MouseWheelListener, Mo
 	public void keyTyped(KeyEvent e) {}
 	public void mouseEntered(MouseEvent e) {}
 	public void mouseExited(MouseEvent e) {}
-	public void mousePressed(MouseEvent e) {}
-	public void mouseReleased(MouseEvent e) {}
 }
