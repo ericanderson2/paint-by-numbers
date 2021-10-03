@@ -19,7 +19,7 @@ public class DisplayWindow extends JFrame {
 		setBackground(Color.BLACK);
 		add(canvas);
 		addKeyListener(input);
-		addMouseListener(input);
+		canvas.addMouseListener(input);
 		canvas.addMouseMotionListener(input);
 		addMouseWheelListener(input);
 		pack();
@@ -45,7 +45,7 @@ public class DisplayWindow extends JFrame {
 		PaintByNumber testImg = new PaintByNumber();
 		for (int x = 0; x < testImg.getWidth(); x++) {
 			for (int y = 0; y < testImg.getHeight(); y++) {
-				Color col = testImg.getColor(x, y);
+				Color col = testImg.getActualColor(x, y);
 				graphics.setColor(col);
 				int xCoord = x * gridSize + game.GRID_SCREEN_OFFSET_X + game.grid_offset_x;
 				int yCoord = y * gridSize + game.GRID_SCREEN_OFFSET_Y + game.grid_offset_y;

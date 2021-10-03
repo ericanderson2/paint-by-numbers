@@ -2,8 +2,6 @@
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
-
-
 public class PaintByNumber {
 	//	Here defined image filters to be used in edgeDetection()
 	
@@ -19,14 +17,23 @@ public class PaintByNumber {
 	private int width;
 	private int height;
 	
-	public PaintByNumber() {
+	public PaintByNumber(/*take an image as a parameter here*/) {
 		
 		pixels = new int[50][50];
 		grid = new int[50][50];
 		
+		
+		//instead of filling pixels with 0s, fill with its values. grid can stay 0s
+		//this image is stored like a paint-by-numbers. So rather than an array of pixels with colors associated, the array is filled with numbers
+		//each pixel has an int corresponding to its color
+		//palette[] is then filled with colors, the index in palette is the int associated with the color
+		//technically 0 should not be used in pixels and the 0 index of palette should stay Color.LIGHT_GRAY
+		
+		//redefine pixels and palette below 
+		
 		for (int i = 0; i < 50; i++) {
 			for (int j = 0; j < 50; j++) {
-				pixels[i][j] = 0;
+				pixels[i][j] = 2;
 				grid[i][j] = 0;
 			}
 		}
@@ -46,11 +53,16 @@ public class PaintByNumber {
 		return palette[grid[y][x]];
 	}
 	
+	//for debugging purposes
+	public Color getActualColor(int x, int y) {
+		return palette[pixels[y][x]];
+	}
+	
 	public int getNumber(int x, int y) {
 		return pixels[y][x];
 	}
 	
-	public BufferedImage edgeDetection(BufferedImage buffImg,double[][] filter) {
+	public BufferedImage edgeDetection(BufferedImage buffImg, double[][] filter) {
 		double[][][] imgArr = imageToArray(buffImg);
 		double[][] convArr = convOnImgArr(imgArr, buffImg.getWidth(),buffImg.getHeight(),
 				filter, filter.length, filter[0].length);

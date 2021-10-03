@@ -1,5 +1,6 @@
 import java.lang.Math;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
 
 public class Game {
 	private DisplayWindow window;
@@ -35,7 +36,7 @@ public class Game {
 			lastMouseY = input.getLastPressEvent().getY();
 		}
 		if (input.getLastDragEvent() != null) {
-			if (lastMouseX > -1) {
+			if (lastMouseX > -1 && input.getLastDragEvent().getButton() == 0) {
 				grid_offset_x += input.getLastDragEvent().getX() - lastMouseX;
 				grid_offset_y += input.getLastDragEvent().getY() - lastMouseY;
 			}
