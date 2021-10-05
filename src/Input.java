@@ -7,6 +7,7 @@ public class Input implements KeyListener, MouseListener, MouseWheelListener, Mo
 	private MouseEvent lastMoveEvent;
 	private MouseEvent lastPressEvent;
 	private MouseEvent lastReleaseEvent;
+	private KeyEvent lastKeyEvent;
 	
 	public Input() {
 		pressed = new boolean[255];
@@ -15,6 +16,7 @@ public class Input implements KeyListener, MouseListener, MouseWheelListener, Mo
 		lastMoveEvent = null;
 		lastPressEvent = null;
 		lastReleaseEvent = null;
+		lastKeyEvent = null;
 	}
 
 	public void mouseReleased(MouseEvent e) {
@@ -59,15 +61,24 @@ public class Input implements KeyListener, MouseListener, MouseWheelListener, Mo
 		return lastMoveEvent;
 	}
 	
+	public KeyEvent getLastKeyEvent() {
+		return lastKeyEvent;
+	}
+	
 	public void clearEvents() {
 		lastWheelEvent = null;
 		lastDragEvent = null;
 		lastMoveEvent = null;
 		lastPressEvent = null;
 		lastReleaseEvent = null;
+		lastKeyEvent = null;
 	}
 	
 //key input handling
+	public void keyTyped(KeyEvent e) {
+		lastKeyEvent = e;
+	}
+
 	public boolean isPressed(int keyCode) {
 		return pressed[keyCode];
 	}
@@ -81,7 +92,6 @@ public class Input implements KeyListener, MouseListener, MouseWheelListener, Mo
 	}
 
 //functions from interfaces that we probably won't use
-	public void keyTyped(KeyEvent e) {}
 	public void mouseEntered(MouseEvent e) {}
 	public void mouseExited(MouseEvent e) {}
 }

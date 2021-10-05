@@ -11,6 +11,9 @@ public class Game {
 	public int GRID_SCREEN_OFFSET_Y = 50;
 	public int grid_offset_x = 0;
 	public int grid_offset_y = 0;
+	private double MAX_GUI_SCALE = 1.5;
+	private double MIN_GUI_SCALE = 0.5;
+	public double gui_scale = 1.0;
 	
 	private double ZOOM_SPEED = 10.0;
 	private double MIN_ZOOM = 1.0;
@@ -26,6 +29,16 @@ public class Game {
 	}
 
 	public void update(double elapsedTime) {
+		if (input.getLastKeyEvent() != null) {
+			char keyChar = input.getLastKeyEvent().getKeyChar();
+			if (keyChar == '=' || keyChar == '+') {
+				gui_scale *= 1.1;
+			} else if (keyChar == '-' || keyChar == '_') {
+				gui_scale *= 0.9;
+			}
+			gui_scale = Math.min(gui_scale, MAX_GUI_SCALE);
+			gui_scale = Math.max(gui_scale, MIN_GUI_SCALE);
+		}
 		if (input.getLastWheelEvent() != null) {
 			zoom += input.getLastWheelEvent().getPreciseWheelRotation() * input.getLastWheelEvent().getScrollAmount() * elapsedTime * ZOOM_SPEED;
 			zoom = Math.min(zoom, MAX_ZOOM);

@@ -36,10 +36,6 @@ public class DisplayWindow extends JFrame {
 		graphics.setColor(Color.BLACK);
 		graphics.fillRect(0, 0, canvas.getWidth(), canvas.getHeight());
 		
-		graphics.setColor(Color.WHITE);
-		graphics.drawString("FPS: " + ((int) 60 / elapsedTime), canvas.getWidth() - 60, 15);
-		graphics.drawString("ZOOM: " + new DecimalFormat("#.##").format(game.zoom), 15, 15);
-		
 		int gridSize = (int)(game.DEFAULT_GRID_SIZE * game.zoom);
 		
 		PaintByNumber testImg = new PaintByNumber();
@@ -56,6 +52,21 @@ public class DisplayWindow extends JFrame {
 					graphics.drawString("" + testImg.getNumber(x, y), xCoord + gridSize / 2 - 3, yCoord + gridSize / 2 + 4);
 				}
 			}
+		}
+		
+		graphics.setColor(Color.LIGHT_GRAY);
+		graphics.fillRect(0, 0, canvas.getWidth(), (int)(100 * game.gui_scale));
+		graphics.setColor(Color.BLACK);
+		int fps = Math.min((int)(60 / elapsedTime), 60);
+		graphics.drawString("FPS: " + fps, canvas.getWidth() - 60, 15);
+		graphics.drawString("ZOOM: " + new DecimalFormat("#.##").format(game.zoom), 15, 15);
+		graphics.drawString("[-]/[+] : change GUI scale", 10, 30);
+		graphics.drawString("scroll wheel : change image scale", 10, 45);
+		
+		int paletteX = (int)(canvas.getWidth() - testImg.paletteSize() * 50 * game.gui_scale - 25 * game.gui_scale);
+		for (int i = 1; i < testImg.paletteSize(); i++) {
+			graphics.setColor(testImg.paletteColor(i));
+			graphics.fillRect((int)(i * 50 * game.gui_scale + paletteX), (int)(25 * game.gui_scale), (int)(50 * game.gui_scale), (int)(50 * game.gui_scale));
 		}
 		
 		graphics.dispose();

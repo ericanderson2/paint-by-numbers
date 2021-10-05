@@ -49,6 +49,14 @@ public class PaintByNumber {
 		return height;
 	}
 	
+	public int paletteSize() {
+		return palette.length;
+	}
+	
+	public Color paletteColor(int i) {
+		return palette[i];
+	}
+	
 	public Color getColor(int x, int y) {
 		return palette[grid[y][x]];
 	}
