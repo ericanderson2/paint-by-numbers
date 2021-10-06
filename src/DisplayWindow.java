@@ -47,7 +47,7 @@ public class DisplayWindow extends JFrame {
 		
 		BufferedImage img = null;
 		try {
-			img = ImageIO.read(new File("anders.png"));
+			img = ImageIO.read(new File("xb.png"));
 		} catch (IOException e) {
 			
 		}
@@ -67,7 +67,7 @@ public class DisplayWindow extends JFrame {
 				}
 			}
 		}
-		
+
 		graphics.setColor(Color.LIGHT_GRAY);
 		graphics.fillRect(0, 0, canvas.getWidth(), (int)(100 * game.gui_scale));
 		graphics.setColor(Color.BLACK);

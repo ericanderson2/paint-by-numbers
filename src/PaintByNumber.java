@@ -19,8 +19,8 @@ public class PaintByNumber {
 	
 	public PaintByNumber(BufferedImage buffImg) {
 		
-		pixels = new int[50][50];
-		grid = new int[50][50];
+		pixels = new int[buffImg.getHeight()][buffImg.getWidth()];
+		grid = new int[buffImg.getHeight()][buffImg.getHeight()];
 		
 		// pixels[][] rn is only filled with black&white outline of reduced picture
 		// BufferedImage to 3D array
@@ -45,8 +45,8 @@ public class PaintByNumber {
 		
 		//redefine pixels and palette below 
 		
-		for (int i = 0; i < 50; i++) {
-			for (int j = 0; j < 50; j++) {
+		for (int i = 0; i < buffImg.getHeight(); i++) {
+			for (int j = 0; j <buffImg.getWidth(); j++) {
 				
 				pixels[i][j] = fixRGBRange(mergedArr[i][j]);
 				//pixels[i][j] =2;
