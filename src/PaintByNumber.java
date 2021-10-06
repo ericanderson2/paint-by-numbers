@@ -21,7 +21,7 @@ public class PaintByNumber {
 		
 		pixels = new int[50][50];
 		grid = new int[50][50];
-		/*
+		
 		// pixels[][] rn is only filled with black&white outline of reduced picture
 		// BufferedImage to 3D array
 		double[][][] imgArr = imageToArray(buffImg);
@@ -36,7 +36,7 @@ public class PaintByNumber {
 			for (int j=0; j<mergedArr[0].length; j++) {
 				mergedArr[i][j] = convArr[i][j] + convArr2[i][j];
 			}
-		}*/
+		}
 		//instead of filling pixels with 0s, fill with its values. grid can stay 0s
 		//this image is stored like a paint-by-numbers. So rather than an array of pixels with colors associated, the array is filled with numbers
 		//each pixel has an int corresponding to its color
@@ -48,11 +48,15 @@ public class PaintByNumber {
 		for (int i = 0; i < 50; i++) {
 			for (int j = 0; j < 50; j++) {
 				
-				//pixels[i][j] = fixRGBRange(mergedArr[i][j]);
-				pixels[i][j] =2;
+				pixels[i][j] = fixRGBRange(mergedArr[i][j]);
+				//pixels[i][j] =2;
 				grid[i][j] = 0;
 				
 			}
+		}
+		palette = new Color[256];
+		for (int i = 0; i < 256; i++) {
+			palette[i] = new Color(i, i, i);
 		}
 		width = pixels[0].length;
 		height = pixels.length;

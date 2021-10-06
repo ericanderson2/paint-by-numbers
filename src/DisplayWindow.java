@@ -47,7 +47,7 @@ public class DisplayWindow extends JFrame {
 		
 		BufferedImage img = null;
 		try {
-			img = ImageIO.read(new File("amogus.png"));
+			img = ImageIO.read(new File("anders.png"));
 		} catch (IOException e) {
 			
 		}
@@ -71,18 +71,21 @@ public class DisplayWindow extends JFrame {
 		graphics.setColor(Color.LIGHT_GRAY);
 		graphics.fillRect(0, 0, canvas.getWidth(), (int)(100 * game.gui_scale));
 		graphics.setColor(Color.BLACK);
-		int fps = Math.min((int)(60 / elapsedTime), 60);
+		//int fps = Math.min((int)(60 / elapsedTime), 60);
+		int fps = (int)(60 / elapsedTime);
 		graphics.drawString("FPS: " + fps, canvas.getWidth() - 60, 15);
 		graphics.drawString("ZOOM: " + new DecimalFormat("#.##").format(game.zoom), 15, 15);
 		graphics.drawString("[-]/[+] : change GUI scale", 10, 30);
 		graphics.drawString("scroll wheel : change image scale", 10, 45);
 		
+		/*
 		int paletteX = (int)(canvas.getWidth() - testImg.paletteSize() * 50 * game.gui_scale - 25 * game.gui_scale);
+		
 		for (int i = 1; i < testImg.paletteSize(); i++) {
 			graphics.setColor(testImg.paletteColor(i));
 			graphics.fillRect((int)(i * 50 * game.gui_scale + paletteX), (int)(25 * game.gui_scale), (int)(50 * game.gui_scale), (int)(50 * game.gui_scale));
 		}
-		
+		*/
 		graphics.dispose();
 		bufferStrat.show();
 	}
