@@ -5,7 +5,7 @@ import java.awt.image.BufferedImage;
 public class PaintByNumber {
 	//	Here defined image filters to be used in edgeDetection()
 	
-	public static final double[][] VERTICAL_ED = {{10,0,-10}, {10,0,-10}, {10,0,-10}};
+	public static final double[][] VERTICAL_ED = {{1,0,-1}, {1,0,-1}, {1,0,-1}};
 	public static final double[][] HORIZONTAL_ED = {{1,1,1}, {0,0,0}, {-1,-1,-1}};
 	
 	//the following definitions are just for test purposes. these would change based on the image file selected
@@ -21,7 +21,7 @@ public class PaintByNumber {
 		
 		pixels = new int[50][50];
 		grid = new int[50][50];
-		
+		/*
 		// pixels[][] rn is only filled with black&white outline of reduced picture
 		// BufferedImage to 3D array
 		double[][][] imgArr = imageToArray(buffImg);
@@ -36,7 +36,7 @@ public class PaintByNumber {
 			for (int j=0; j<mergedArr[0].length; j++) {
 				mergedArr[i][j] = convArr[i][j] + convArr2[i][j];
 			}
-		}
+		}*/
 		//instead of filling pixels with 0s, fill with its values. grid can stay 0s
 		//this image is stored like a paint-by-numbers. So rather than an array of pixels with colors associated, the array is filled with numbers
 		//each pixel has an int corresponding to its color

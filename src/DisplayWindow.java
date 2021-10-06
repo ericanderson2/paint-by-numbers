@@ -1,11 +1,18 @@
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferStrategy;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.text.DecimalFormat;
 
 public class DisplayWindow extends JFrame {
 	private Canvas canvas;
 	private Game game;
+	
+	public static final double[][] VERTICAL_ED = {{1,0,-1}, {1,0,-1}, {1,0,-1}};
+	public static final double[][] HORIZONTAL_ED = {{1,1,1}, {0,0,0}, {-1,-1,-1}};
 	
 	public DisplayWindow(int width, int height, Game game, Input input) {
 		setTitle("Paint By Numbers");
@@ -38,7 +45,14 @@ public class DisplayWindow extends JFrame {
 		
 		int gridSize = (int)(game.DEFAULT_GRID_SIZE * game.zoom);
 		
-		PaintByNumber testImg = new PaintByNumber();
+		BufferedImage img = null;
+		try {
+			img = ImageIO.read(new File("amogus.png"));
+		} catch (IOException e) {
+			
+		}
+		
+		PaintByNumber testImg = new PaintByNumber(img);
 		for (int x = 0; x < testImg.getWidth(); x++) {
 			for (int y = 0; y < testImg.getHeight(); y++) {
 				Color col = testImg.getActualColor(x, y);

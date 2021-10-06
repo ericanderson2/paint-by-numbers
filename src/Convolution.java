@@ -17,6 +17,7 @@ public class Convolution {
 	 public double pixelConv(double[][] src, int x, int y, double[][] kernel,
 			 	int kH, int kW) {
 		 double newVal = 0;
+		 
 		 for (int i =0; i < kW; i++) {
 			 for (int j = 0; j < kH; j++) {
 				 // this is formula for convolution. See Repo for discussion on image convolution
@@ -42,19 +43,19 @@ public class Convolution {
 		 	 the resultant matrix will have different dimensions. See Repo for more */
 		 int innerW = w - kW + 1;			
 		 int innerH = h - kH + 1;
-		 
-		 double[][] inner = new double[innerW][innerH];
+		
+		 double[][] inner = new double[innerH][innerW];
 		 
 		 // apply convolution to each pixel element in image array
 		 for (int i=0; i<innerW;i++) {
 			 for (int j=0; j<innerH;j++) {
-				 inner[j][i] = pixelConv(src,i,j,kernel,kH,kW);
+				 inner[j][i] =pixelConv(src,i,j,kernel,kH,kW);
 			 }
 		 }
-		 
+
 		 /* now we need to pad the resultant to match the size of the original image
 		    so that we can deal with the numbers at the edges */
-		 double[][] paddedInner = new double[w][h];
+		 double[][] paddedInner = new double[h][w];
 		 
 		 for (int i = 0; i < innerW; i++) {
 			 for (int j = 0; j < innerH; j++) {
