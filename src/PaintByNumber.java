@@ -29,7 +29,7 @@ public class PaintByNumber {
 		
 		pixels = new int[buffImg.getHeight()][buffImg.getWidth()];
 		grid = new int[buffImg.getHeight()][buffImg.getHeight()];
-		
+		/*
 		// pixels[][] rn is only filled with black&white outline of reduced picture
 		// BufferedImage to 3D array
 		double[][][] imgArr = imageToArray(buffImg);
@@ -62,12 +62,115 @@ public class PaintByNumber {
 				
 			}
 		}
+		*/
+		int[][] colors = new int[buffImg.getWidth() * buffImg.getHeight()][5];
+		
+		for (int x = 0; x < buffImg.getWidth(); x++) {
+            for (int y = 0; y < buffImg.getHeight(); y++) {
+				grid[x][y] = 0;
+				int index = x + y * buffImg.getWidth();
+				Color col = new Color(buffImg.getRGB(x, y));
+                colors[index][0] = x;
+				colors[index][1] = y;
+				colors[index][2] = col.getRed();
+				colors[index][3] = col.getGreen();
+				colors[index][4] = col.getBlue();
+            }
+        }
+		
 		palette = new Color[256];
 		for (int i = 0; i < 256; i++) {
-			palette[i] = new Color(i, i, i);
+			palette[i] = Color.CYAN;
 		}
+		
+		createBuckets(colors, 1);
+		
 		width = pixels[0].length;
 		height = pixels.length;
+	}
+	
+	private void createBuckets(int[][] colors, int depth) {
+		if (depth < 4) {		
+			int rLow = 255;
+			int rHigh = 0;
+			int gLow = 255;
+			int gHigh = 0;
+			int bLow = 255;
+			int bHigh = 0;
+
+			for (int i = 0; i < colors.length; i++) {
+				rLow = Math.min(rLow, colors[i][2]);
+				rHigh = Math.max(rHigh, colors[i][2]);
+				gLow = Math.min(gLow, colors[i][3]);
+				gHigh = Math.max(gHigh, colors[i][3]);
+				bLow = Math.min(bLow, colors[i][4]);
+				bHigh = Math.max(bHigh, colors[i][4]);
+			}
+			
+			int rRange = rHigh - rLow;
+			int gRange = gHigh - gLow;
+			int bRange = bHigh - bLow;
+			
+			int indexToSortBy = 2;
+			
+			if (rRange > gRange && rRange >= bRange)  {
+				indexToSortBy = 2;
+			} else if (gRange > bRange && gRange >= rRange) {
+				indexToSortBy = 3;
+			} else {
+				indexToSortBy = 4;
+			}
+			
+			for (int i = 0; i < colors.length - 1; i++) {
+				int minIndex = i;
+				for (int j = i + 1; j < colors.length; j++) {
+					if (colors[j][indexToSortBy] < colors[minIndex][indexToSortBy]) {
+						minIndex = j;
+					}
+				}
+				
+				int[] temp = colors[minIndex];
+				colors[minIndex] = colors[i];
+				colors[i] = temp;
+			}
+			
+			int[][] bucket1 = new int[colors.length / 2][5];
+			int[][] bucket2 = new int[colors.length - (colors.length / 2)][5];
+			
+			for (int i = 0; i < colors.length; i++) {
+				if (i < colors.length / 2) {
+					bucket1[i] = colors[i];
+				} else {
+					bucket2[i - (colors.length / 2)] = colors[i];
+				}
+			}
+			
+			createBuckets(bucket1, depth + 1);
+			createBuckets(bucket2, depth + 1);
+		} else {
+			int rTotal = 0;
+			int gTotal = 0;
+			int bTotal = 0;
+			for (int i = 0; i < colors.length; i++) {
+				rTotal += colors[i][2];
+				gTotal += colors[i][3];
+				bTotal += colors[i][4];
+			}
+			Color averageCol = new Color(rTotal / colors.length, gTotal / colors.length, bTotal / colors.length);
+			
+			int index = 0;
+			for (int i = 0; i < palette.length; i++) {
+				if (palette[i] == Color.CYAN) {
+					index = i;
+				}
+			}
+			
+			for (int i = 0; i < colors.length; i++) {
+				pixels[colors[i][1]][colors[i][0]] = index;
+			}
+			
+			palette[index] = averageCol;
+		}
 	}
 	
 	public int getWidth() {

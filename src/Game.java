@@ -6,7 +6,7 @@ public class Game {
 	private DisplayWindow window;
 	private Input input;
 	
-	public int DEFAULT_GRID_SIZE = 15;
+	public int DEFAULT_GRID_SIZE = 5;
 	public int GRID_SCREEN_OFFSET_X = 50;
 	public int GRID_SCREEN_OFFSET_Y = 50;
 	public int grid_offset_x = 0;
