@@ -47,7 +47,7 @@ public class DisplayWindow extends JFrame {
 		
 		BufferedImage img = null;
 		try {
-			img = ImageIO.read(new File("xb.png"));
+			img = ImageIO.read(new File("anders.png"));
 		} catch (IOException e) {
 			
 		}

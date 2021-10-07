@@ -14,6 +14,8 @@ public class PaintByNumber {
 	public static final double[][] SCHARR_VERT = {{3, 0, -3}, {10, 0, -10}, {3, 0, -3}};
 	public static final double[][] SCHARR_HORZ = {{3, 10, 3}, {0, 0, 0}, {-3, -10, -3}};
 	
+	public static final double[][] GAUSSIAN_BLUR = {{0.111f,0.111f,0.111f}, {0.111f,0.111f,0.111f}, {0.111f,0.111f,0.111f}};
+	
 	//the following definitions are just for test purposes. these would change based on the image file selected
 	//we will probably have to use ArrayList or something instead of arrays
 	private int[][] pixels; //ints corresponding to pixel colors
@@ -33,10 +35,10 @@ public class PaintByNumber {
 		double[][][] imgArr = imageToArray(buffImg);
 		// apply convolution on 3D array and store result as 2D array
 		double[][] convArr = convOnImgArr(imgArr, buffImg.getWidth(),buffImg.getHeight(),
-				SOBEL_VERT, SOBEL_VERT.length, SOBEL_VERT[0].length);
+				VERTICAL_ED, SOBEL_VERT.length, SOBEL_VERT[0].length);
 		// second array will hold horizontal edge detection
 		double[][] convArr2 = convOnImgArr(imgArr,buffImg.getWidth(),buffImg.getHeight(),
-				SOBEL_HORZ, SOBEL_HORZ.length, SOBEL_HORZ[0].length);
+				HORIZONTAL_ED, SOBEL_HORZ.length, SOBEL_HORZ[0].length);
 		double[][] mergedArr = new double[convArr.length][convArr[0].length];
 		for (int i =0; i<mergedArr.length; i++){
 			for (int j=0; j<mergedArr[0].length; j++) {
@@ -177,6 +179,8 @@ public class PaintByNumber {
 	    		combConv[i][j] = rConv[i][j] + gConv[i][j] + bConv[i][j];
 	    	}
 	    }
+	    // blur the image to make it easier to edge detect
+	    //combConv = op.matrixConvolution(combConv,w,h,GAUSSIAN_BLUR,kH,kW);
 		return combConv;
 	}
 	
