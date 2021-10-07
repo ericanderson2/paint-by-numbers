@@ -23,12 +23,18 @@ public class Game {
 	private int lastMouseX = -1;
 	private int lastMouseY = -1;
 	
+	public double debug_indicator_angle = 0.0;
+	
 	public Game(int width, int height) {
 		input = new Input();
 		window = new DisplayWindow(width, height, this, input);
 	}
 
 	public void update(double elapsedTime) {
+		debug_indicator_angle += elapsedTime * 0.5;
+		if (debug_indicator_angle > Math.PI * 2) {
+			debug_indicator_angle -= Math.PI * 2;
+		}			
 		if (input.getLastKeyEvent() != null) {
 			char keyChar = input.getLastKeyEvent().getKeyChar();
 			if (keyChar == '=' || keyChar == '+') {

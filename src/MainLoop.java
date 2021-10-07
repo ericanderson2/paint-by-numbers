@@ -10,15 +10,17 @@ public class MainLoop implements Runnable {
 	public void run() {
 		running = true;
 		long lastTime = System.currentTimeMillis();
-		long currentTime;
+		long currentTime = System.currentTimeMillis();
+		double elapsedTime = 1;
 		
 		while(running) {	
-			currentTime = System.currentTimeMillis();
-			double elapsedTime = (currentTime - lastTime) / 1000d;
 			lastTime = currentTime;
 			
 			update(elapsedTime);
 			draw(elapsedTime);
+			
+			currentTime = System.currentTimeMillis();
+			elapsedTime = (currentTime - lastTime) / 1000d;		
 		}
 	}
 

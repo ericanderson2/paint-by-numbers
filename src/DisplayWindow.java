@@ -11,6 +11,8 @@ public class DisplayWindow extends JFrame {
 	private Canvas canvas;
 	private Game game;
 	
+	private double lastFrame = System.currentTimeMillis() / 1000d;
+	
 	public static final double[][] VERTICAL_ED = {{1,0,-1}, {1,0,-1}, {1,0,-1}};
 	public static final double[][] HORIZONTAL_ED = {{1,1,1}, {0,0,0}, {-1,-1,-1}};
 	
@@ -47,7 +49,7 @@ public class DisplayWindow extends JFrame {
 		
 		BufferedImage img = null;
 		try {
-			img = ImageIO.read(new File("anders.png"));
+			img = ImageIO.read(new File("flowers.png"));
 		} catch (IOException e) {
 			
 		}
@@ -59,11 +61,15 @@ public class DisplayWindow extends JFrame {
 				graphics.setColor(col);
 				int xCoord = x * gridSize + game.GRID_SCREEN_OFFSET_X + game.grid_offset_x;
 				int yCoord = y * gridSize + game.GRID_SCREEN_OFFSET_Y + game.grid_offset_y;
-				graphics.fillRect(xCoord, yCoord, gridSize, gridSize);
-				if (col == Color.LIGHT_GRAY) {
-					graphics.setColor(Color.BLACK);
-					graphics.drawRect(xCoord, yCoord, gridSize, gridSize);
-					graphics.drawString("" + testImg.getNumber(x, y), xCoord + gridSize / 2 - 3, yCoord + gridSize / 2 + 4);
+				
+				if (xCoord >= 0 - gridSize && xCoord <= canvas.getWidth()
+					&& yCoord >= 0 - gridSize && yCoord <= canvas.getHeight()) {
+						graphics.fillRect(xCoord, yCoord, gridSize, gridSize);
+						if (col == Color.LIGHT_GRAY) {
+							graphics.setColor(Color.BLACK);
+							graphics.drawRect(xCoord, yCoord, gridSize, gridSize);
+							graphics.drawString("" + testImg.getNumber(x, y), xCoord + gridSize / 2 - 3, yCoord + gridSize / 2 + 4);
+						}
 				}
 			}
 		}
@@ -72,11 +78,14 @@ public class DisplayWindow extends JFrame {
 		graphics.fillRect(0, 0, canvas.getWidth(), (int)(100 * game.gui_scale));
 		graphics.setColor(Color.BLACK);
 		//int fps = Math.min((int)(60 / elapsedTime), 60);
-		int fps = (int)(60 / elapsedTime);
-		graphics.drawString("FPS: " + fps, canvas.getWidth() - 60, 15);
-		graphics.drawString("ZOOM: " + new DecimalFormat("#.##").format(game.zoom), 15, 15);
+		//int fps = (int)(60 / elapsedTime);
+		double fps = System.currentTimeMillis() / 1000d - lastFrame;
+		lastFrame = System.currentTimeMillis() / 1000d;
+		graphics.drawString("FPS: " + new DecimalFormat("#.##").format(fps), canvas.getWidth() - 60, 15);
+		graphics.drawString("ZOOM: " + new DecimalFormat("#.##").format(game.zoom), 10, 15);
 		graphics.drawString("[-]/[+] : change GUI scale", 10, 30);
 		graphics.drawString("scroll wheel : change image scale", 10, 45);
+		graphics.drawString("Colors: " + testImg.paletteSize(), 10, 60);
 		
 		/*
 		int paletteX = (int)(canvas.getWidth() - testImg.paletteSize() * 50 * game.gui_scale - 25 * game.gui_scale);
@@ -86,6 +95,9 @@ public class DisplayWindow extends JFrame {
 			graphics.fillRect((int)(i * 50 * game.gui_scale + paletteX), (int)(25 * game.gui_scale), (int)(50 * game.gui_scale), (int)(50 * game.gui_scale));
 		}
 		*/
+		graphics.setColor(Color.YELLOW);
+		graphics.drawLine(canvas.getWidth() - 60, 200, (int)(canvas.getWidth() - 60 + 50 * Math.cos(game.debug_indicator_angle)), (int)(200 + 50 * Math.sin(game.debug_indicator_angle)));
+		
 		graphics.dispose();
 		bufferStrat.show();
 	}

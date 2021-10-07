@@ -1,6 +1,7 @@
 //class for storing a paint-by-numbers image
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
 
 public class PaintByNumber {
 	//	Here defined image filters to be used in edgeDetection()
@@ -20,7 +21,7 @@ public class PaintByNumber {
 	//we will probably have to use ArrayList or something instead of arrays
 	private int[][] pixels; //ints corresponding to pixel colors
 	private int[][] grid; //ints corresponding to color user has painted in
-	private Color[] palette = {Color.LIGHT_GRAY, Color.RED, Color.BLUE, Color.CYAN}; //colors in image. index = grid number corresponding to color
+	private ArrayList<Color> palette;//colors in image. index = grid number corresponding to color
 	
 	private int width;
 	private int height;
@@ -78,19 +79,17 @@ public class PaintByNumber {
             }
         }
 		
-		palette = new Color[256];
-		for (int i = 0; i < 256; i++) {
-			palette[i] = Color.CYAN;
-		}
+		palette = new ArrayList<Color>(1);
 		
-		createBuckets(colors, 1);
+		createBuckets(colors, 3, 0);
 		
 		width = pixels[0].length;
 		height = pixels.length;
 	}
 	
-	private void createBuckets(int[][] colors, int depth) {
-		if (depth < 4) {		
+	private void createBuckets(int[][] colors, int maxDepth, int depth) {
+		//num colors = 2^maxDepth
+		if (depth < maxDepth) {		
 			int rLow = 255;
 			int rHigh = 0;
 			int gLow = 255;
@@ -145,8 +144,8 @@ public class PaintByNumber {
 				}
 			}
 			
-			createBuckets(bucket1, depth + 1);
-			createBuckets(bucket2, depth + 1);
+			createBuckets(bucket1, maxDepth, depth + 1);
+			createBuckets(bucket2, maxDepth, depth + 1);
 		} else {
 			int rTotal = 0;
 			int gTotal = 0;
@@ -158,18 +157,11 @@ public class PaintByNumber {
 			}
 			Color averageCol = new Color(rTotal / colors.length, gTotal / colors.length, bTotal / colors.length);
 			
-			int index = 0;
-			for (int i = 0; i < palette.length; i++) {
-				if (palette[i] == Color.CYAN) {
-					index = i;
-				}
-			}
-			
 			for (int i = 0; i < colors.length; i++) {
-				pixels[colors[i][1]][colors[i][0]] = index;
+				pixels[colors[i][1]][colors[i][0]] = palette.size();
 			}
 			
-			palette[index] = averageCol;
+			palette.add(averageCol);
 		}
 	}
 	
@@ -182,20 +174,20 @@ public class PaintByNumber {
 	}
 	
 	public int paletteSize() {
-		return palette.length;
+		return palette.size();
 	}
 	
 	public Color paletteColor(int i) {
-		return palette[i];
+		return palette.get(i);
 	}
 	
 	public Color getColor(int x, int y) {
-		return palette[grid[y][x]];
+		return palette.get(grid[y][x]);
 	}
 	
 	//for debugging purposes
 	public Color getActualColor(int x, int y) {
-		return palette[pixels[y][x]];
+		return palette.get(pixels[y][x]);
 	}
 	
 	public int getNumber(int x, int y) {
