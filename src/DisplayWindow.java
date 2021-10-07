@@ -67,7 +67,7 @@ public class DisplayWindow extends JFrame {
 				}
 			}
 		}
-
+		//graphics.drawImage(testImg.edgeDetection(img, VERTICAL_ED, HORIZONTAL_ED),0,80,canvas);
 		graphics.setColor(Color.LIGHT_GRAY);
 		graphics.fillRect(0, 0, canvas.getWidth(), (int)(100 * game.gui_scale));
 		graphics.setColor(Color.BLACK);

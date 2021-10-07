@@ -5,8 +5,14 @@ import java.awt.image.BufferedImage;
 public class PaintByNumber {
 	//	Here defined image filters to be used in edgeDetection()
 	
-	public static final double[][] VERTICAL_ED = {{1,0,-1}, {1,0,-1}, {1,0,-1}};
-	public static final double[][] HORIZONTAL_ED = {{1,1,1}, {0,0,0}, {-1,-1,-1}};
+	public static final double[][] VERTICAL_ED = {{-1,0,1}, {-1,0,1}, {-1,0,1}};
+	public static final double[][] HORIZONTAL_ED = {{-1,-1,-1}, {0,0,0}, {1,1,1}};
+	
+	public static final double[][] SOBEL_VERT = {{1, 0, -1}, {2, 0, -2}, {1, 0, -1}};
+	public static final double[][] SOBEL_HORZ = {{1, 2, 1}, {0, 0, 0}, {-1, -2, -1}};
+	
+	public static final double[][] SCHARR_VERT = {{3, 0, -3}, {10, 0, -10}, {3, 0, -3}};
+	public static final double[][] SCHARR_HORZ = {{3, 10, 3}, {0, 0, 0}, {-3, -10, -3}};
 	
 	//the following definitions are just for test purposes. these would change based on the image file selected
 	//we will probably have to use ArrayList or something instead of arrays
@@ -27,10 +33,10 @@ public class PaintByNumber {
 		double[][][] imgArr = imageToArray(buffImg);
 		// apply convolution on 3D array and store result as 2D array
 		double[][] convArr = convOnImgArr(imgArr, buffImg.getWidth(),buffImg.getHeight(),
-				VERTICAL_ED, VERTICAL_ED.length, VERTICAL_ED[0].length);
+				SOBEL_VERT, SOBEL_VERT.length, SOBEL_VERT[0].length);
 		// second array will hold horizontal edge detection
 		double[][] convArr2 = convOnImgArr(imgArr,buffImg.getWidth(),buffImg.getHeight(),
-				HORIZONTAL_ED, HORIZONTAL_ED.length, HORIZONTAL_ED[0].length);
+				SOBEL_HORZ, SOBEL_HORZ.length, SOBEL_HORZ[0].length);
 		double[][] mergedArr = new double[convArr.length][convArr[0].length];
 		for (int i =0; i<mergedArr.length; i++){
 			for (int j=0; j<mergedArr[0].length; j++) {
@@ -211,6 +217,5 @@ public class PaintByNumber {
 	    
 		return (int)col;
 	}
-	
 	
 }
