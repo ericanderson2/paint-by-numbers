@@ -10,6 +10,7 @@ import java.text.DecimalFormat;
 public class DisplayWindow extends JFrame {
 	private Canvas canvas;
 	private Game game;
+	private PaintByNumber testImg;
 	
 	private double lastFrame = System.currentTimeMillis() / 1000d;
 	
@@ -36,6 +37,13 @@ public class DisplayWindow extends JFrame {
 		this.game = game;
 		canvas.createBufferStrategy(2);
 		setVisible(true);
+		
+		try {
+			BufferedImage img = ImageIO.read(new File("flowers.png"));
+			testImg = new PaintByNumber(img);
+		} catch (IOException e) {
+			System.exit(-1);
+		}
 	}
 
 	public void draw(double elapsedTime) {
@@ -47,14 +55,6 @@ public class DisplayWindow extends JFrame {
 		
 		int gridSize = (int)(game.DEFAULT_GRID_SIZE * game.zoom);
 		
-		BufferedImage img = null;
-		try {
-			img = ImageIO.read(new File("flowers.png"));
-		} catch (IOException e) {
-			
-		}
-		
-		PaintByNumber testImg = new PaintByNumber(img);
 		for (int x = 0; x < testImg.getWidth(); x++) {
 			for (int y = 0; y < testImg.getHeight(); y++) {
 				Color col = testImg.getActualColor(x, y);
@@ -79,7 +79,7 @@ public class DisplayWindow extends JFrame {
 		graphics.setColor(Color.BLACK);
 		//int fps = Math.min((int)(60 / elapsedTime), 60);
 		//int fps = (int)(60 / elapsedTime);
-		double fps = System.currentTimeMillis() / 1000d - lastFrame;
+		double fps = 1 / (System.currentTimeMillis() / 1000d - lastFrame);
 		lastFrame = System.currentTimeMillis() / 1000d;
 		graphics.drawString("FPS: " + new DecimalFormat("#.##").format(fps), canvas.getWidth() - 60, 15);
 		graphics.drawString("ZOOM: " + new DecimalFormat("#.##").format(game.zoom), 10, 15);
