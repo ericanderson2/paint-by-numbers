@@ -39,7 +39,7 @@ public class DisplayWindow extends JFrame {
 		setVisible(true);
 		
 		try {
-			BufferedImage img = ImageIO.read(new File("flowers.png"));
+			BufferedImage img = ImageIO.read(new File("anders.png"));
 			testImg = new PaintByNumber(img);
 		} catch (IOException e) {
 			System.exit(-1);
@@ -65,6 +65,9 @@ public class DisplayWindow extends JFrame {
 				if (xCoord >= 0 - gridSize && xCoord <= canvas.getWidth()
 					&& yCoord >= 0 - gridSize && yCoord <= canvas.getHeight()) {
 						graphics.fillRect(xCoord, yCoord, gridSize, gridSize);
+						graphics.setColor(Color.WHITE);
+						graphics.drawString(""+testImg.getNumber(x,y), xCoord+gridSize/2 -3, yCoord + gridSize/2 +4);
+						graphics.setColor(col);
 						if (col == Color.LIGHT_GRAY) {
 							graphics.setColor(Color.BLACK);
 							graphics.drawRect(xCoord, yCoord, gridSize, gridSize);

@@ -31,21 +31,7 @@ public class PaintByNumber {
 		pixels = new int[buffImg.getHeight()][buffImg.getWidth()];
 		grid = new int[buffImg.getHeight()][buffImg.getHeight()];
 		/*
-		// pixels[][] rn is only filled with black&white outline of reduced picture
-		// BufferedImage to 3D array
-		double[][][] imgArr = imageToArray(buffImg);
-		// apply convolution on 3D array and store result as 2D array
-		double[][] convArr = convOnImgArr(imgArr, buffImg.getWidth(),buffImg.getHeight(),
-				VERTICAL_ED, SOBEL_VERT.length, SOBEL_VERT[0].length);
-		// second array will hold horizontal edge detection
-		double[][] convArr2 = convOnImgArr(imgArr,buffImg.getWidth(),buffImg.getHeight(),
-				HORIZONTAL_ED, SOBEL_HORZ.length, SOBEL_HORZ[0].length);
-		double[][] mergedArr = new double[convArr.length][convArr[0].length];
-		for (int i =0; i<mergedArr.length; i++){
-			for (int j=0; j<mergedArr[0].length; j++) {
-				mergedArr[i][j] = convArr[i][j] + convArr2[i][j];
-			}
-		}
+		
 		//instead of filling pixels with 0s, fill with its values. grid can stay 0s
 		//this image is stored like a paint-by-numbers. So rather than an array of pixels with colors associated, the array is filled with numbers
 		//each pixel has an int corresponding to its color
@@ -68,7 +54,7 @@ public class PaintByNumber {
 		
 		for (int x = 0; x < buffImg.getWidth(); x++) {
             for (int y = 0; y < buffImg.getHeight(); y++) {
-				grid[x][y] = 0;
+				grid[y][x] = 0;
 				int index = x + y * buffImg.getWidth();
 				Color col = new Color(buffImg.getRGB(x, y));
                 colors[index][0] = x;
