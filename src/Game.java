@@ -1,6 +1,12 @@
 import java.lang.Math;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
+import java.awt.FileDialog;
+import java.awt.image.BufferStrategy;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import javax.imageio.ImageIO;
+import java.io.IOException;
 
 public class Game {
 	private DisplayWindow window;
@@ -43,6 +49,21 @@ public class Game {
 				gui_scale *= 1.1;
 			} else if (keyChar == '-' || keyChar == '_') {
 				gui_scale *= 0.9;
+			} else if (keyChar == 'A' || keyChar == 'a') {
+				try {		
+					FileDialog fd = new FileDialog(window, "Choose a file", FileDialog.LOAD);
+					fd.setDirectory(System.getProperty("user.dir"));
+					fd.setFile("*.png");
+					fd.setVisible(true);
+					String filename = fd.getFile();
+					if (filename != null) {
+						BufferedImage img = ImageIO.read(new File(fd.getDirectory() + filename));
+						window.setCurrentImg(new PaintByNumber(img));
+					}
+				} catch (IOException e) {
+					System.out.println("Error opening dialog and reading image");
+					window.setCurrentImg(null);
+				}
 			}
 			gui_scale = Math.min(gui_scale, MAX_GUI_SCALE);
 			gui_scale = Math.max(gui_scale, MIN_GUI_SCALE);
