@@ -55,16 +55,21 @@ public class DisplayWindow extends JFrame {
 			for (int x = 0; x < currentImg.getWidth(); x++) {
 				for (int y = 0; y < currentImg.getHeight(); y++) {
 					Color col = currentImg.getActualColor(x, y);
-					graphics.setColor(col);
+					Color gridCol = currentImg.getColor(x, y);
+					graphics.setColor(gridCol);
 					int xCoord = x * gridSize + game.GRID_SCREEN_OFFSET_X + game.grid_offset_x;
 					int yCoord = y * gridSize + game.GRID_SCREEN_OFFSET_Y + game.grid_offset_y;
 					
+					graphics.fillRect(xCoord, yCoord, gridSize, gridSize);
 					if (xCoord >= 0 - gridSize && xCoord <= canvas.getWidth()
 						&& yCoord >= 0 - gridSize && yCoord <= canvas.getHeight()) {
 						if ( (game.mousePressedX>xCoord && game.mousePressedX < xCoord+gridSize)
-								&& (game.mousePressedY>yCoord && game.mousePressedY<yCoord + gridSize))
-								graphics.fillRect(xCoord, yCoord, gridSize, gridSize);
-							graphics.setColor(Color.WHITE);
+								&& (game.mousePressedY>yCoord && game.mousePressedY<yCoord + gridSize)) {
+							currentImg.setGridNumber(x,y,currentImg.getNumber(x,y));
+							currentImg.setGridColor(x, y, col);
+								//graphics.fillRect(xCoord, yCoord, gridSize, gridSize);
+						}
+							graphics.setColor(Color.BLACK);
 							graphics.drawString(""+currentImg.getNumber(x,y), xCoord+gridSize/2 -3, yCoord + gridSize/2 +4);
 							graphics.setColor(col);
 							if (col == Color.LIGHT_GRAY) {
@@ -76,7 +81,7 @@ public class DisplayWindow extends JFrame {
 				}
 			}
 		}
-		//graphics.drawImage(currentImg.edgeDetection(img, VERTICAL_ED, HORIZONTAL_ED),0,80,canvas);
+		
 		graphics.setColor(Color.LIGHT_GRAY);
 		graphics.fillRect(0, 0, canvas.getWidth(), (int)(100 * game.gui_scale));
 		graphics.setColor(Color.BLACK);

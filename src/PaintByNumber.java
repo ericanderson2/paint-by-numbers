@@ -22,6 +22,7 @@ public class PaintByNumber {
 	private int[][] pixels; //ints corresponding to pixel colors
 	private int[][] grid; //ints corresponding to color user has painted in
 	private ArrayList<Color> palette;//colors in image. index = grid number corresponding to color
+	private ArrayList<Color> userPalette;
 	
 	private int width;
 	private int height;
@@ -54,7 +55,7 @@ public class PaintByNumber {
 		
 		for (int x = 0; x < buffImg.getWidth(); x++) {
             for (int y = 0; y < buffImg.getHeight(); y++) {
-				grid[y][x] = 0;
+				grid[y][x] = 8;
 				int index = x + y * buffImg.getWidth();
 				Color col = new Color(buffImg.getRGB(x, y));
                 colors[index][0] = x;
@@ -66,6 +67,8 @@ public class PaintByNumber {
         }
 		
 		palette = new ArrayList<Color>(1);
+		userPalette = new ArrayList<Color>(1);
+		userPalette.add(Color.WHITE); // need throwaway index for grid[][] initialization
 		
 		createBuckets(colors, 3, 0);
 		
@@ -148,6 +151,7 @@ public class PaintByNumber {
 			}
 			
 			palette.add(averageCol);
+			userPalette.add(Color.WHITE);
 		}
 	}
 	
@@ -168,7 +172,8 @@ public class PaintByNumber {
 	}
 	
 	public Color getColor(int x, int y) {
-		return palette.get(grid[y][x]);
+		//System.out.println(userPalette.size());
+		return userPalette.get(grid[y][x]);
 	}
 	
 	//for debugging purposes
@@ -176,10 +181,17 @@ public class PaintByNumber {
 		return palette.get(pixels[y][x]);
 	}
 	
+	public void setGridColor(int x, int y, Color col) {
+		userPalette.set(grid[y][x], col);
+	}
+	
 	public int getNumber(int x, int y) {
 		return pixels[y][x];
 	}
 	
+	public void setGridNumber(int x, int y, int num) {
+		grid[y][x] = num;
+	}
 	/**
 	 * Takes a BufferedImage object and a filter/kernel to use and applies the filter to that image
 	 * @param buffImg			BufferedImage we want to convert
