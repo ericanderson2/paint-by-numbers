@@ -20,8 +20,10 @@ public class Game {
 	private double MAX_ZOOM = 10.0;
 	public double zoom = 1;
 	
-	private int lastMouseX = -1;
-	private int lastMouseY = -1;
+	public int lastMouseX = -1;
+	public int lastMouseY = -1;
+	public int mousePressedX = -1;
+	public int mousePressedY = -1;
 	
 	public double debug_indicator_angle = 0.0;
 	
@@ -52,7 +54,9 @@ public class Game {
 		}
 		if (input.getLastPressEvent() != null) {
 			lastMouseX = input.getLastPressEvent().getX();
+			mousePressedX = lastMouseX;
 			lastMouseY = input.getLastPressEvent().getY();
+			mousePressedY = lastMouseY;
 		}
 		if (input.getLastDragEvent() != null) {
 			if (lastMouseX > -1 && input.getLastDragEvent().getButton() == 0) {

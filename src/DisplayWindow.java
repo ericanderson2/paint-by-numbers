@@ -64,7 +64,9 @@ public class DisplayWindow extends JFrame {
 				
 				if (xCoord >= 0 - gridSize && xCoord <= canvas.getWidth()
 					&& yCoord >= 0 - gridSize && yCoord <= canvas.getHeight()) {
-						graphics.fillRect(xCoord, yCoord, gridSize, gridSize);
+					if ( (game.mousePressedX>xCoord && game.mousePressedX < xCoord+gridSize)
+							&& (game.mousePressedY>yCoord && game.mousePressedY<yCoord + gridSize))
+							graphics.fillRect(xCoord, yCoord, gridSize, gridSize);
 						graphics.setColor(Color.WHITE);
 						graphics.drawString(""+testImg.getNumber(x,y), xCoord+gridSize/2 -3, yCoord + gridSize/2 +4);
 						graphics.setColor(col);
