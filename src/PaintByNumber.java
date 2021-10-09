@@ -55,7 +55,7 @@ public class PaintByNumber {
 		
 		for (int x = 0; x < buffImg.getWidth(); x++) {
             for (int y = 0; y < buffImg.getHeight(); y++) {
-				grid[y][x] = 8;
+				grid[y][x] = 0;
 				int index = x + y * buffImg.getWidth();
 				Color col = new Color(buffImg.getRGB(x, y));
                 colors[index][0] = x;
@@ -67,8 +67,7 @@ public class PaintByNumber {
         }
 		
 		palette = new ArrayList<Color>(1);
-		userPalette = new ArrayList<Color>(1);
-		userPalette.add(Color.WHITE); // need throwaway index for grid[][] initialization
+		palette.add(Color.LIGHT_GRAY);
 		
 		createBuckets(colors, 3, 0);
 		
@@ -151,7 +150,6 @@ public class PaintByNumber {
 			}
 			
 			palette.add(averageCol);
-			userPalette.add(Color.WHITE);
 		}
 	}
 	
@@ -173,7 +171,7 @@ public class PaintByNumber {
 	
 	public Color getColor(int x, int y) {
 		//System.out.println(userPalette.size());
-		return userPalette.get(grid[y][x]);
+		return palette.get(grid[y][x]);
 	}
 	
 	//for debugging purposes
@@ -181,12 +179,16 @@ public class PaintByNumber {
 		return palette.get(pixels[y][x]);
 	}
 	
-	public void setGridColor(int x, int y, Color col) {
-		userPalette.set(grid[y][x], col);
+	public void setGridColor(int x, int y, int color) {
+		grid[y][x] = color;
 	}
 	
 	public int getNumber(int x, int y) {
 		return pixels[y][x];
+	}
+	
+	public int colorToPalette(Color col) {
+		return palette.indexOf(col);
 	}
 	
 	public void setGridNumber(int x, int y, int num) {
@@ -315,4 +317,7 @@ public class PaintByNumber {
 		return (int)col;
 	}
 	
+	public void revealImage() {
+		grid = pixels;
+	}
 }

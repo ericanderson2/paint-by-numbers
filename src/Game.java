@@ -4,6 +4,8 @@ import java.awt.event.MouseEvent;
 import java.awt.FileDialog;
 import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
+import java.awt.*;
+import javax.swing.*;
 import java.io.File;
 import javax.imageio.ImageIO;
 import java.io.IOException;
@@ -31,11 +33,15 @@ public class Game {
 	public int mousePressedX = -1;
 	public int mousePressedY = -1;
 	
+	public PaintByNumber currentImg;
+	
 	public double debug_indicator_angle = 0.0;
 	
 	public Game(int width, int height) {
 		input = new Input();
 		window = new DisplayWindow(width, height, this, input);
+		
+		currentImg = null;
 	}
 
 	public void update(double elapsedTime) {
@@ -49,7 +55,7 @@ public class Game {
 				gui_scale *= 1.1;
 			} else if (keyChar == '-' || keyChar == '_') {
 				gui_scale *= 0.9;
-			} else if (keyChar == 'A' || keyChar == 'a') {
+			} /*else if (keyChar == 'A' || keyChar == 'a') {
 				try {		
 					FileDialog fd = new FileDialog(window, "Choose a file", FileDialog.LOAD);
 					fd.setDirectory(System.getProperty("user.dir"));
@@ -58,13 +64,13 @@ public class Game {
 					String filename = fd.getFile();
 					if (filename != null) {
 						BufferedImage img = ImageIO.read(new File(fd.getDirectory() + filename));
-						window.setCurrentImg(new PaintByNumber(img));
+						currentImg = new PaintByNumber(img);
 					}
 				} catch (IOException e) {
 					System.out.println("Error opening dialog and reading image");
-					window.setCurrentImg(null);
+					currentImg = null;
 				}
-			}
+			}*/
 			gui_scale = Math.min(gui_scale, MAX_GUI_SCALE);
 			gui_scale = Math.max(gui_scale, MIN_GUI_SCALE);
 		}
@@ -78,7 +84,7 @@ public class Game {
 			mousePressedX = lastMouseX;
 			lastMouseY = input.getLastPressEvent().getY();
 			mousePressedY = lastMouseY;
-		}
+		}/*
 		if (input.getLastDragEvent() != null) {
 			if (lastMouseX > -1 && input.getLastDragEvent().getButton() == 0) {
 				grid_offset_x += input.getLastDragEvent().getX() - lastMouseX;
@@ -89,7 +95,7 @@ public class Game {
 		} else if (input.getLastMoveEvent() != null) {
 			lastMouseX = input.getLastMoveEvent().getX();
 			lastMouseY = input.getLastMoveEvent().getY();
-		}
+		}*/
 		input.clearEvents();
 	}
 
