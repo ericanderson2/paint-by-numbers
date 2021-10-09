@@ -31,8 +31,8 @@ public class PaintByNumber {
 	public PaintByNumber(BufferedImage buffImg) {
 		
 		pixels = new int[buffImg.getHeight()][buffImg.getWidth()];
-		grid = new int[buffImg.getHeight()][buffImg.getHeight()];
-		outline = new int[buffImg.getHeight()][buffImg.getHeight()];
+		grid = new int[buffImg.getHeight()][buffImg.getWidth()];
+		outline = new int[buffImg.getHeight()][buffImg.getWidth()];
 		/*
 		
 		//instead of filling pixels with 0s, fill with its values. grid can stay 0s
@@ -80,6 +80,7 @@ public class PaintByNumber {
 		
 		//create the outline. determine the color difference between pixels next to each other.
 		//greater difference == darker gray outline
+		/*
 		int greatestGreatestDifference = 0; //max range of difference
 		for (int x = 0; x < buffImg.getWidth(); x++) {
 			for (int y = 0; y < buffImg.getHeight(); y++) {
@@ -96,18 +97,23 @@ public class PaintByNumber {
 				outline[x][y] = greatestDifference;
 				greatestGreatestDifference = Math.max(greatestGreatestDifference, greatestDifference);
 			}
-		}
+		}*/
 		
 		//create a palette of grays to be used for the outline
 		grayPalette = new ArrayList<Color>(1);
 		grayPalette.add(Color.WHITE);
+		for (int i = 1; i < palette.size(); i++) {
+			int gray = (int)(255 - (128 / (palette.size() - 1)) * (palette.size() - 1 - i));
+			grayPalette.add(new Color(gray, gray, gray));
+		}
+		/*
 		for (int i = 1; i <= greatestGreatestDifference; i++) {
 			int gray = (int)(192 - (128 / greatestGreatestDifference) * i);
 			grayPalette.add(new Color(gray, gray, gray));
 		}
-		
-		width = pixels[0].length;
-		height = pixels.length;
+		*/
+		width = buffImg.getWidth();
+		height = buffImg.getHeight();
 	}
 	
 	//recursively separate all the pixels in the image into 2^maxDepth different groups, and then
@@ -185,14 +191,18 @@ public class PaintByNumber {
 				gTotal += colors[i][3];
 				bTotal += colors[i][4];
 			}
+			
 			Color averageCol = new Color(rTotal / colors.length, gTotal / colors.length, bTotal / colors.length);
+			if (palette.indexOf(averageCol) < 0) {
+				palette.add(averageCol);
+			}
 			
 			//set each pixel in the group to be the average color
 			for (int i = 0; i < colors.length; i++) {
-				pixels[colors[i][1]][colors[i][0]] = palette.size();
+				pixels[colors[i][1]][colors[i][0]] = palette.indexOf(averageCol);
 			}
 			
-			palette.add(averageCol);
+			
 		}
 	}
 	
@@ -240,7 +250,7 @@ public class PaintByNumber {
 	
 	//return the color associated with a pixel in the image outline
 	public Color getOutlineColor(int x, int y) {
-		return grayPalette.get(outline[x][y]);
+		return grayPalette.get(pixels[y][x]);
 	}
 	
 	//duplicate of setGridColor. we should get rid of one of these.

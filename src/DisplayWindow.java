@@ -74,7 +74,7 @@ public class DisplayWindow extends JFrame implements MouseMotionListener, MouseL
 		if (game.currentImg != null) {
 			//resize the sidebar based on the size of the image's outline
 			//scale the outline size so that small and large images end up about the same size
-			outlineScale = Math.max(200 / game.currentImg.getWidth(), 2);
+			outlineScale = Math.max(game.currentImg.getWidth() / 200, 2);
 			sidebarWidth = Math.max(sidebarWidth, 20 + outlineScale * game.currentImg.getWidth());
 		}
 		
@@ -113,9 +113,11 @@ public class DisplayWindow extends JFrame implements MouseMotionListener, MouseL
 				}
 			}
 			
-			//redraw sidebar to cover image if user drags it to the left
+			//redraw sidebar and FPS to cover image if user drags it to the left
 			graphics.setColor(Color.LIGHT_GRAY);
 			graphics.fillRect(0, 0, sidebarWidth, canvas.getHeight());
+			graphics.setColor(Color.WHITE);
+			graphics.drawString("FPS: " + (int)(1 / elapsedTime), canvas.getWidth() - 60, 15);
 			
 			//draw mini black and white outline
 			int outlineX = (sidebarWidth / 2) - (game.currentImg.getWidth() * outlineScale / 2);
