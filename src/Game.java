@@ -15,8 +15,8 @@ public class Game {
 	private Input input;
 	
 	public int DEFAULT_GRID_SIZE = 5;
-	public int GRID_SCREEN_OFFSET_X = 50;
-	public int GRID_SCREEN_OFFSET_Y = 50;
+	public int GRID_SCREEN_OFFSET_X = 300;
+	public int GRID_SCREEN_OFFSET_Y = 100;
 	public int grid_offset_x = 0;
 	public int grid_offset_y = 0;
 	private double MAX_GUI_SCALE = 1.5;
@@ -35,8 +35,6 @@ public class Game {
 	
 	public PaintByNumber currentImg;
 	
-	public double debug_indicator_angle = 0.0;
-	
 	public Game(int width, int height) {
 		input = new Input();
 		window = new DisplayWindow(width, height, this, input);
@@ -45,10 +43,9 @@ public class Game {
 	}
 
 	public void update(double elapsedTime) {
-		debug_indicator_angle += elapsedTime * 0.5;
-		if (debug_indicator_angle > Math.PI * 2) {
-			debug_indicator_angle -= Math.PI * 2;
-		}			
+		//most of this code can be thrown out. we just need to move scroll handling to DisplayWindow
+		//there probably won't need to be a game update function since all updates happen as a response
+		//to user input, and that all got moved to DisplayWindow
 		if (input.getLastKeyEvent() != null) {
 			char keyChar = input.getLastKeyEvent().getKeyChar();
 			if (keyChar == '=' || keyChar == '+') {
@@ -79,12 +76,12 @@ public class Game {
 			zoom = Math.min(zoom, MAX_ZOOM);
 			zoom = Math.max(zoom, MIN_ZOOM);
 		}
-		if (input.getLastPressEvent() != null) {
+		/*if (input.getLastPressEvent() != null) {
 			lastMouseX = input.getLastPressEvent().getX();
 			mousePressedX = lastMouseX;
 			lastMouseY = input.getLastPressEvent().getY();
 			mousePressedY = lastMouseY;
-		}/*
+		}
 		if (input.getLastDragEvent() != null) {
 			if (lastMouseX > -1 && input.getLastDragEvent().getButton() == 0) {
 				grid_offset_x += input.getLastDragEvent().getX() - lastMouseX;

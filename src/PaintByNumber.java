@@ -21,8 +21,9 @@ public class PaintByNumber {
 	//we will probably have to use ArrayList or something instead of arrays
 	private int[][] pixels; //ints corresponding to pixel colors
 	private int[][] grid; //ints corresponding to color user has painted in
+	private int[][] outline;
 	private ArrayList<Color> palette;//colors in image. index = grid number corresponding to color
-	private ArrayList<Color> userPalette;
+	private ArrayList<Color> grayPalette;
 	
 	private int width;
 	private int height;
@@ -31,6 +32,7 @@ public class PaintByNumber {
 		
 		pixels = new int[buffImg.getHeight()][buffImg.getWidth()];
 		grid = new int[buffImg.getHeight()][buffImg.getHeight()];
+		outline = new int[buffImg.getHeight()][buffImg.getHeight()];
 		/*
 		
 		//instead of filling pixels with 0s, fill with its values. grid can stay 0s
@@ -51,11 +53,15 @@ public class PaintByNumber {
 			}
 		}
 		*/
+		
+		//create an array with associated x,y,r,g,b values for each pixel.
+		//this is used only for color reduction
 		int[][] colors = new int[buffImg.getWidth() * buffImg.getHeight()][5];
 		
 		for (int x = 0; x < buffImg.getWidth(); x++) {
             for (int y = 0; y < buffImg.getHeight(); y++) {
 				grid[y][x] = 0;
+				outline[y][x] = 0;
 				int index = x + y * buffImg.getWidth();
 				Color col = new Color(buffImg.getRGB(x, y));
                 colors[index][0] = x;
@@ -66,18 +72,49 @@ public class PaintByNumber {
             }
         }
 		
+		//create the palette, then run color reduction to fill it
 		palette = new ArrayList<Color>(1);
 		palette.add(Color.LIGHT_GRAY);
 		
 		createBuckets(colors, 3, 0);
 		
+		//create the outline. determine the color difference between pixels next to each other.
+		//greater difference == darker gray outline
+		int greatestGreatestDifference = 0; //max range of difference
+		for (int x = 0; x < buffImg.getWidth(); x++) {
+			for (int y = 0; y < buffImg.getHeight(); y++) {
+				int greatestDifference = 0;
+				if (x > 0 && pixels[y][x] != pixels[y][x - 1]) {
+					greatestDifference = Math.max(greatestDifference, Math.abs(pixels[y][x] - pixels[y][x - 1]));
+				}else if (x < buffImg.getWidth() - 1 && pixels[y][x] != pixels[y][x + 1]) {
+					greatestDifference = Math.max(greatestDifference, Math.abs(pixels[y][x] - pixels[y][x + 1]));
+				} else if (y > 0 && pixels[y][x] != pixels[y - 1][x]) {
+					greatestDifference = Math.max(greatestDifference, Math.abs(pixels[y][x] - pixels[y - 1][x]));
+				} else if (y < buffImg.getHeight() - 1 && pixels[y][x] != pixels[y + 1][x]) {
+					greatestDifference = Math.max(greatestDifference, Math.abs(pixels[y][x] - pixels[y + 1][x]));
+				}
+				outline[x][y] = greatestDifference;
+				greatestGreatestDifference = Math.max(greatestGreatestDifference, greatestDifference);
+			}
+		}
+		
+		//create a palette of grays to be used for the outline
+		grayPalette = new ArrayList<Color>(1);
+		grayPalette.add(Color.WHITE);
+		for (int i = 1; i <= greatestGreatestDifference; i++) {
+			int gray = (int)(192 - (128 / greatestGreatestDifference) * i);
+			grayPalette.add(new Color(gray, gray, gray));
+		}
+		
 		width = pixels[0].length;
 		height = pixels.length;
 	}
 	
+	//recursively separate all the pixels in the image into 2^maxDepth different groups, and then
+	//set those pixels to their group's average color
 	private void createBuckets(int[][] colors, int maxDepth, int depth) {
-		//num colors = 2^maxDepth
-		if (depth < maxDepth) {		
+		if (depth < maxDepth) {
+			//find which color of r,g,b has the greatest range in the given pixels
 			int rLow = 255;
 			int rHigh = 0;
 			int gLow = 255;
@@ -108,6 +145,7 @@ public class PaintByNumber {
 				indexToSortBy = 4;
 			}
 			
+			//sort by color with the greatest range (selection sort)
 			for (int i = 0; i < colors.length - 1; i++) {
 				int minIndex = i;
 				for (int j = i + 1; j < colors.length; j++) {
@@ -121,9 +159,11 @@ public class PaintByNumber {
 				colors[i] = temp;
 			}
 			
+			//divide the sorted pixels into 2 groups
 			int[][] bucket1 = new int[colors.length / 2][5];
 			int[][] bucket2 = new int[colors.length - (colors.length / 2)][5];
 			
+			//this is probably what causes the array indexing errors
 			for (int i = 0; i < colors.length; i++) {
 				if (i < colors.length / 2) {
 					bucket1[i] = colors[i];
@@ -132,9 +172,11 @@ public class PaintByNumber {
 				}
 			}
 			
+			//recursively call the function to create more groups
 			createBuckets(bucket1, maxDepth, depth + 1);
 			createBuckets(bucket2, maxDepth, depth + 1);
 		} else {
+			//find the average color of the pixels
 			int rTotal = 0;
 			int gTotal = 0;
 			int bTotal = 0;
@@ -145,6 +187,7 @@ public class PaintByNumber {
 			}
 			Color averageCol = new Color(rTotal / colors.length, gTotal / colors.length, bTotal / colors.length);
 			
+			//set each pixel in the group to be the average color
 			for (int i = 0; i < colors.length; i++) {
 				pixels[colors[i][1]][colors[i][0]] = palette.size();
 			}
@@ -165,32 +208,42 @@ public class PaintByNumber {
 		return palette.size();
 	}
 	
+	//return the color associated with i
 	public Color paletteColor(int i) {
 		return palette.get(i);
 	}
 	
+	//return the user selected color associated with a pixel
 	public Color getColor(int x, int y) {
-		//System.out.println(userPalette.size());
 		return palette.get(grid[y][x]);
 	}
 	
-	//for debugging purposes
+	//return the actual color associated with a pixel
 	public Color getActualColor(int x, int y) {
 		return palette.get(pixels[y][x]);
 	}
 	
+	//set the user selected pixel to a certain value
 	public void setGridColor(int x, int y, int color) {
 		grid[y][x] = color;
 	}
 	
+	//return the value associated with a pixel
 	public int getNumber(int x, int y) {
 		return pixels[y][x];
 	}
 	
+	//return the value associated with a color
 	public int colorToPalette(Color col) {
 		return palette.indexOf(col);
 	}
 	
+	//return the color associated with a pixel in the image outline
+	public Color getOutlineColor(int x, int y) {
+		return grayPalette.get(outline[x][y]);
+	}
+	
+	//duplicate of setGridColor. we should get rid of one of these.
 	public void setGridNumber(int x, int y, int num) {
 		grid[y][x] = num;
 	}
@@ -317,6 +370,7 @@ public class PaintByNumber {
 		return (int)col;
 	}
 	
+	//set the user selected values to the actual ones for each pixel
 	public void revealImage() {
 		grid = pixels;
 	}
