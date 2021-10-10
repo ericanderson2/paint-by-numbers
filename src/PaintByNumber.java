@@ -1,6 +1,8 @@
 //class for storing a paint-by-numbers image
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.awt.image.AffineTransformOp;
+import java.awt.geom.AffineTransform;
 import java.util.ArrayList;
 
 public class PaintByNumber {
@@ -29,6 +31,16 @@ public class PaintByNumber {
 	private int height;
 	
 	public PaintByNumber(BufferedImage buffImg) {
+		width = buffImg.getWidth();
+		height = buffImg.getHeight();
+		
+		if (width > 100 || height > 100) {
+			double scale = Math.min(100d / width, 100d / height);
+			buffImg = scale1(buffImg, scale);
+			width = buffImg.getWidth();
+			height = buffImg.getHeight();
+		}
+		
 		pixels = new int[buffImg.getHeight()][buffImg.getWidth()];
 		grid = new int[buffImg.getHeight()][buffImg.getWidth()];
 		outline = new int[buffImg.getHeight()][buffImg.getWidth()];
@@ -108,8 +120,6 @@ public class PaintByNumber {
 			grayPalette.add(new Color(gray, gray, gray));
 		}
 		*/
-		width = buffImg.getWidth();
-		height = buffImg.getHeight();
 	}
 	
 	//recursively separate all the pixels in the image into 2^maxDepth different groups, and then
@@ -379,5 +389,20 @@ public class PaintByNumber {
 	//set the user selected values to the actual ones for each pixel
 	public void revealImage() {
 		grid = pixels;
+	}
+	
+	private static BufferedImage scale1(BufferedImage before, double scale) {
+		int w = before.getWidth();
+		int h = before.getHeight();
+		// Create a new image of the proper size
+		int w2 = (int) (w * scale);
+		int h2 = (int) (h * scale);
+		BufferedImage after = new BufferedImage(w2, h2, BufferedImage.TYPE_INT_ARGB);
+		AffineTransform scaleInstance = AffineTransform.getScaleInstance(scale, scale);
+		AffineTransformOp scaleOp 
+			= new AffineTransformOp(scaleInstance, AffineTransformOp.TYPE_BILINEAR);
+
+		scaleOp.filter(before, after);
+		return after;
 	}
 }
