@@ -29,7 +29,6 @@ public class PaintByNumber {
 	private int height;
 	
 	public PaintByNumber(BufferedImage buffImg) {
-		
 		pixels = new int[buffImg.getHeight()][buffImg.getWidth()];
 		grid = new int[buffImg.getHeight()][buffImg.getWidth()];
 		outline = new int[buffImg.getHeight()][buffImg.getWidth()];
@@ -57,7 +56,6 @@ public class PaintByNumber {
 		//create an array with associated x,y,r,g,b values for each pixel.
 		//this is used only for color reduction
 		int[][] colors = new int[buffImg.getWidth() * buffImg.getHeight()][5];
-		
 		for (int x = 0; x < buffImg.getWidth(); x++) {
             for (int y = 0; y < buffImg.getHeight(); y++) {
 				grid[y][x] = 0;
@@ -75,9 +73,7 @@ public class PaintByNumber {
 		//create the palette, then run color reduction to fill it
 		palette = new ArrayList<Color>(1);
 		palette.add(Color.LIGHT_GRAY);
-		
 		createBuckets(colors, 3, 0);
-		
 		//create the outline. determine the color difference between pixels next to each other.
 		//greater difference == darker gray outline
 		/*
@@ -150,7 +146,7 @@ public class PaintByNumber {
 			} else {
 				indexToSortBy = 4;
 			}
-			
+
 			//sort by color with the greatest range (selection sort)
 			for (int i = 0; i < colors.length - 1; i++) {
 				int minIndex = i;
@@ -164,17 +160,19 @@ public class PaintByNumber {
 				colors[minIndex] = colors[i];
 				colors[i] = temp;
 			}
-			
+
 			//divide the sorted pixels into 2 groups
-			int[][] bucket1 = new int[colors.length / 2][5];
-			int[][] bucket2 = new int[colors.length - (colors.length / 2)][5];
+			int firstArrayLength = colors.length / 2;
+
+			int[][] bucket1 = new int[firstArrayLength][5];
+			int[][] bucket2 = new int[colors.length - firstArrayLength][5];
 			
 			//this is probably what causes the array indexing errors
 			for (int i = 0; i < colors.length; i++) {
-				if (i < colors.length / 2) {
+				if (i < firstArrayLength) {
 					bucket1[i] = colors[i];
 				} else {
-					bucket2[i - (colors.length / 2)] = colors[i];
+					bucket2[i - firstArrayLength] = colors[i];
 				}
 			}
 			
@@ -201,8 +199,6 @@ public class PaintByNumber {
 			for (int i = 0; i < colors.length; i++) {
 				pixels[colors[i][1]][colors[i][0]] = palette.indexOf(averageCol);
 			}
-			
-			
 		}
 	}
 	

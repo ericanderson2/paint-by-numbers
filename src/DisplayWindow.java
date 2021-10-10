@@ -90,6 +90,7 @@ public class DisplayWindow extends JFrame implements MouseMotionListener, MouseL
 			int gridSize = (int)(game.DEFAULT_GRID_SIZE * game.zoom);
 			
 			//draw main paint by number grid
+			try { //try statement in case user switches the image while this loop is executing
 			for (int x = 0; x < game.currentImg.getWidth(); x++) {
 				for (int y = 0; y < game.currentImg.getHeight(); y++) {
 					Color col = game.currentImg.getColor(x, y);
@@ -111,6 +112,9 @@ public class DisplayWindow extends JFrame implements MouseMotionListener, MouseL
 							}
 					}
 				}
+			}
+			} catch (Exception e) {
+				//current image was switched mid draw command
 			}
 			
 			//redraw sidebar and FPS to cover image if user drags it to the left
