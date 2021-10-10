@@ -12,6 +12,8 @@ import java.awt.event.*;
 public class DisplayWindow extends JFrame implements MouseMotionListener, MouseListener {
 	private Canvas canvas;
 	private Game game;
+	private int sidebarWidth;
+	private int outlineScale;
 	
 	public static final double[][] VERTICAL_ED = {{1,0,-1}, {1,0,-1}, {1,0,-1}};
 	public static final double[][] HORIZONTAL_ED = {{1,1,1}, {0,0,0}, {-1,-1,-1}};
@@ -58,6 +60,9 @@ public class DisplayWindow extends JFrame implements MouseMotionListener, MouseL
 		this.game = game;
 		canvas.createBufferStrategy(2);
 		
+		sidebarWidth = 220;
+		outlineScale = 2;
+		
 		setVisible(true);
 	}
 
@@ -69,77 +74,76 @@ public class DisplayWindow extends JFrame implements MouseMotionListener, MouseL
 		graphics.setColor(Color.BLACK);
 		graphics.fillRect(0, 0, canvas.getWidth(), canvas.getHeight());
 		
-		int sidebarWidth = 220;
-		int outlineScale = 2;
-		if (game.currentImg != null) {
-			//resize the sidebar based on the size of the image's outline
-			//scale the outline size so that small and large images end up about the same size
-			outlineScale = Math.max(game.currentImg.getWidth() / 200, 2);
-			sidebarWidth = Math.max(sidebarWidth, 20 + outlineScale * game.currentImg.getWidth());
-		}
-		
 		//draw sidebard
 		graphics.setColor(Color.LIGHT_GRAY);
 		graphics.fillRect(0, 0, sidebarWidth, canvas.getHeight());
 		
-		//show fps
-		graphics.setColor(Color.WHITE);
-		graphics.drawString("FPS: " + (int)(1 / elapsedTime), canvas.getWidth() - 60, 15);
+		//calculate font size
+		int gridSize = (int)(game.grid_size * game.zoom);
+		Font font = new Font("TimesRoman", Font.PLAIN, (int)(gridSize * 0.8));
+		graphics.setFont(font);
+		FontMetrics metrics = graphics.getFontMetrics(font);
 		
 		if (game.currentImg != null) {
-			int gridSize = (int)(game.DEFAULT_GRID_SIZE * game.zoom);
-			
 			//draw main paint by number grid
 			try { //try statement in case user switches the image while this loop is executing
-			for (int x = 0; x < game.currentImg.getWidth(); x++) {
-				for (int y = 0; y < game.currentImg.getHeight(); y++) {
-					Color col = game.currentImg.getColor(x, y);
-					graphics.setColor(col);
-					int xCoord = x * gridSize + game.GRID_SCREEN_OFFSET_X + game.grid_offset_x;
-					int yCoord = y * gridSize + game.GRID_SCREEN_OFFSET_Y + game.grid_offset_y;
-					
-					graphics.fillRect(xCoord, yCoord, gridSize, gridSize);
-					if (xCoord >= 0 - gridSize && xCoord <= canvas.getWidth()
-						&& yCoord >= 0 - gridSize && yCoord <= canvas.getHeight()) {
-							graphics.setColor(Color.BLACK);
-							if (col != game.currentImg.getActualColor(x, y)) {
-								graphics.drawString(""+game.currentImg.getNumber(x,y), xCoord+gridSize/2 -3, yCoord + gridSize/2 +4);
-							}
-							if (col == Color.LIGHT_GRAY) {
-								graphics.setColor(Color.BLACK);
-								graphics.drawRect(xCoord, yCoord, gridSize, gridSize);
-								graphics.drawString("" + game.currentImg.getNumber(x, y), xCoord + gridSize / 2 - 3, yCoord + gridSize / 2 + 4);
-							}
+				for (int x = 0; x < game.currentImg.getWidth(); x++) {
+					for (int y = 0; y < game.currentImg.getHeight(); y++) {
+						int xCoord = gridSize * x + game.grid_offset_x + ((canvas.getWidth() + sidebarWidth) / 2) - ((game.currentImg.getWidth() * gridSize) / 2);
+						int yCoord = gridSize * y + game.grid_offset_y + (canvas.getHeight() / 2) - ((game.currentImg.getHeight() * gridSize) / 2);
+						
+						if (xCoord >= 0 - gridSize && xCoord <= canvas.getWidth()
+							&& yCoord >= 0 - gridSize && yCoord <= canvas.getHeight()) {
+								if (game.currentImg.getNumber(x, y) > 0) {
+									Color col = game.currentImg.getColor(x, y);
+									graphics.setColor(col);
+									graphics.fillRect(xCoord, yCoord, gridSize, gridSize);
+									graphics.setColor(Color.BLACK);
+									String text = Integer.toString(game.currentImg.getNumber(x, y));
+									if (col != game.currentImg.getActualColor(x, y)) {
+										graphics.drawString(text, xCoord + gridSize / 2 - metrics.stringWidth(text) / 2, yCoord + gridSize + gridSize / 2 - metrics.getHeight() / 2 - gridSize / 4);
+									}
+									if (col == Color.LIGHT_GRAY) {
+										graphics.drawRect(xCoord, yCoord, gridSize, gridSize);
+										graphics.drawString(text, xCoord + gridSize / 2 - metrics.stringWidth(text) / 2, yCoord + gridSize + gridSize / 2 - metrics.getHeight() / 2 - gridSize / 4);
+									}
+								}
+						}
 					}
 				}
-			}
+				
+				//redraw sidebar to cover image if user drags it to the left
+				graphics.setColor(Color.LIGHT_GRAY);
+				graphics.fillRect(0, 0, sidebarWidth, canvas.getHeight());
+
+				//draw mini black and white outline
+				int outlineX = (sidebarWidth / 2) - (game.currentImg.getWidth() * outlineScale / 2);
+				int outlineY = 100;
+				for (int x = 0; x < game.currentImg.getWidth(); x++) {
+					for (int y = 0; y < game.currentImg.getHeight(); y++) {
+						graphics.setColor(game.currentImg.getOutlineColor(x, y));
+						graphics.fillRect(outlineX + x * outlineScale, outlineY + y * outlineScale, outlineScale, outlineScale);
+					}
+				}
+				
+				//draw color palette
+				int paletteRectSize = (sidebarWidth - 20) / 4;
+				for (int i = 1; i < game.currentImg.paletteSize(); i++) {
+					graphics.setColor(game.currentImg.paletteColor(i));
+					graphics.fillRect(10 + ((i - 1) * paletteRectSize) % (sidebarWidth - 20), 20 + outlineY + game.currentImg.getHeight() * outlineScale + (int)(((i - 1) * paletteRectSize) / (sidebarWidth - 20)) * paletteRectSize, paletteRectSize, paletteRectSize);
+				}
+			
 			} catch (Exception e) {
 				//current image was switched mid draw command
 			}
 			
-			//redraw sidebar and FPS to cover image if user drags it to the left
-			graphics.setColor(Color.LIGHT_GRAY);
-			graphics.fillRect(0, 0, sidebarWidth, canvas.getHeight());
-			graphics.setColor(Color.WHITE);
-			graphics.drawString("FPS: " + (int)(1 / elapsedTime), canvas.getWidth() - 60, 15);
 			
-			//draw mini black and white outline
-			int outlineX = (sidebarWidth / 2) - (game.currentImg.getWidth() * outlineScale / 2);
-			int outlineY = 100;
-			for (int x = 0; x < game.currentImg.getWidth(); x++) {
-				for (int y = 0; y < game.currentImg.getHeight(); y++) {
-					graphics.setColor(game.currentImg.getOutlineColor(x, y));
-					graphics.fillRect(outlineX + x * outlineScale, outlineY + y * outlineScale, outlineScale, outlineScale);
-				}
-			}
-			
-			//draw color palette
-			int paletteRectSize = (sidebarWidth - 20) / 4;
-			for (int i = 1; i < game.currentImg.paletteSize(); i++) {
-				graphics.setColor(game.currentImg.paletteColor(i));
-				graphics.fillRect(10 + ((i - 1) * paletteRectSize) % (sidebarWidth - 20), 20 + outlineY + game.currentImg.getHeight() * outlineScale + (int)(((i - 1) * paletteRectSize) / (sidebarWidth - 20)) * paletteRectSize, paletteRectSize, paletteRectSize);
-			}
 		}
+		
+		//show fps
+		graphics.setFont(new Font("TimesRoman", Font.PLAIN, 12));
+		graphics.setColor(Color.WHITE);
+		graphics.drawString("FPS: " + (int)(1 / elapsedTime), canvas.getWidth() - 60, 15);
 	
 		graphics.dispose();
 		bufferStrat.show();
@@ -152,22 +156,32 @@ public class DisplayWindow extends JFrame implements MouseMotionListener, MouseL
 	}
 	
 	public void mouseDragged(MouseEvent e) {
-		if (game.lastMouseX > -1) {
-			//drag the paint by numbers image
-			game.grid_offset_x += e.getX() - game.lastMouseX;
-			game.grid_offset_y += e.getY() - game.lastMouseY;
-			game.lastMouseX = e.getX();
-			game.lastMouseY = e.getY();
+		if (SwingUtilities.isRightMouseButton(e)) {
+			if (game.lastMouseX > -1) {
+				//drag the paint by numbers image
+				game.grid_offset_x += e.getX() - game.lastMouseX;
+				game.grid_offset_y += e.getY() - game.lastMouseY;
+				game.lastMouseX = e.getX();
+				game.lastMouseY = e.getY();
+			}
+		} else {
+			colorGrid(e.getX(), e.getY());
 		}
     }
 	
 	public void mouseClicked(MouseEvent e) {
-		int gridSize = (int)(game.DEFAULT_GRID_SIZE * game.zoom);
-		int xCoord = (e.getX() - game.GRID_SCREEN_OFFSET_X - game.grid_offset_x) / gridSize;
-		int yCoord = (e.getY() - game.GRID_SCREEN_OFFSET_Y - game.grid_offset_y) / gridSize;
-		
-		//color the grid space the user clicks on
+		if (e.getButton() == 1) {
+			colorGrid(e.getX(), e.getY());
+		}
+	}
+	
+	private void colorGrid(int x, int y) {
 		if (game.currentImg != null) {
+			int gridSize = (int)(game.grid_size * game.zoom);
+			int xCoord = (x - game.grid_offset_x - (((canvas.getWidth() + sidebarWidth) / 2) - ((game.currentImg.getWidth() * gridSize) / 2))) / gridSize;
+			int yCoord = (y - game.grid_offset_y - ((canvas.getHeight() / 2) - ((game.currentImg.getHeight() * gridSize) / 2))) / gridSize;
+			
+			//color the grid space the user clicks on
 			if (xCoord >= 0 && xCoord < game.currentImg.getWidth()
 				&& yCoord >= 0 && yCoord < game.currentImg.getHeight()) {
 					game.currentImg.setGridColor(xCoord, yCoord, game.currentImg.colorToPalette(game.currentImg.getActualColor(xCoord, yCoord)));
@@ -191,8 +205,24 @@ public class DisplayWindow extends JFrame implements MouseMotionListener, MouseL
 			String filename = fd.getFile();
 			if (filename != null) {
 				BufferedImage img = ImageIO.read(new File(fd.getDirectory() + filename));
-				game.currentImg = new PaintByNumber(img);
+				game.currentImg = new PaintByNumber(img, 4);
 			}
+			
+			game.zeroSettings();
+			
+			sidebarWidth = 220;
+			outlineScale = 2;
+			outlineScale = Math.max(game.currentImg.getWidth() / 200, 2);
+			sidebarWidth = Math.max(sidebarWidth, 20 + outlineScale * game.currentImg.getWidth());
+			
+			if ((canvas.getWidth() - sidebarWidth) / game.currentImg.getWidth() < 
+				canvas.getHeight() / game.currentImg.getHeight()) {
+				game.grid_size = (canvas.getWidth() - sidebarWidth) / (game.currentImg.getWidth() * 2);
+			} else {
+				game.grid_size = canvas.getHeight() / (game.currentImg.getHeight() * 2);
+			}
+			game.zoom = 2.0;
+			
 		} catch (IOException e) {
 			System.out.println("Error opening dialog and reading image");
 			game.currentImg = null;

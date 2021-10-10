@@ -29,16 +29,19 @@ public class PaintByNumber {
 	
 	private int width;
 	private int height;
+	private BufferedImage originalImage;
 	
-	public PaintByNumber(BufferedImage buffImg) {
+	public PaintByNumber(BufferedImage buffImg, int depth) {
 		width = buffImg.getWidth();
 		height = buffImg.getHeight();
+		originalImage = buffImg;
 		
 		if (width > 100 || height > 100) {
 			double scale = Math.min(100d / width, 100d / height);
 			buffImg = scale1(buffImg, scale);
 			width = buffImg.getWidth();
 			height = buffImg.getHeight();
+			originalImage = buffImg;
 		}
 		
 		pixels = new int[buffImg.getHeight()][buffImg.getWidth()];
@@ -68,12 +71,17 @@ public class PaintByNumber {
 		//create an array with associated x,y,r,g,b values for each pixel.
 		//this is used only for color reduction
 		int[][] colors = new int[buffImg.getWidth() * buffImg.getHeight()][5];
+		ArrayList<Color> colorsInOriginal = new ArrayList<Color>(1);
 		for (int x = 0; x < buffImg.getWidth(); x++) {
             for (int y = 0; y < buffImg.getHeight(); y++) {
 				grid[y][x] = 0;
 				outline[y][x] = 0;
+				pixels[y][x] = 0;
 				int index = x + y * buffImg.getWidth();
 				Color col = new Color(buffImg.getRGB(x, y));
+				if (colorsInOriginal.indexOf(col) < 0 && originalImage.getRGB(x, y) >> 24 != 0) {
+					colorsInOriginal.add(col);
+				}
                 colors[index][0] = x;
 				colors[index][1] = y;
 				colors[index][2] = col.getRed();
@@ -85,7 +93,24 @@ public class PaintByNumber {
 		//create the palette, then run color reduction to fill it
 		palette = new ArrayList<Color>(1);
 		palette.add(Color.LIGHT_GRAY);
-		createBuckets(colors, 3, 0);
+		
+		if (colorsInOriginal.size() <= 16) {
+			for (int x = 0; x < buffImg.getWidth(); x++) {
+				for (int y = 0; y < buffImg.getHeight(); y++) {
+					if (originalImage.getRGB(x, y) >> 24 != 0) {
+						Color col = new Color(buffImg.getRGB(x, y));
+						if (palette.indexOf(col) < 0) {
+							palette.add(col);
+						}
+						pixels[y][x] = palette.indexOf(col);
+					} else {
+						pixels[y][x] = 0;
+					}
+				}
+			}
+		} else {
+			createBuckets(colors, depth, 0);
+		}
 		//create the outline. determine the color difference between pixels next to each other.
 		//greater difference == darker gray outline
 		/*
@@ -207,7 +232,9 @@ public class PaintByNumber {
 			
 			//set each pixel in the group to be the average color
 			for (int i = 0; i < colors.length; i++) {
-				pixels[colors[i][1]][colors[i][0]] = palette.indexOf(averageCol);
+				if (originalImage.getRGB(colors[i][0], colors[i][1]) >> 24 != 0) {
+					pixels[colors[i][1]][colors[i][0]] = palette.indexOf(averageCol);
+				}
 			}
 		}
 	}

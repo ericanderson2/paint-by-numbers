@@ -14,7 +14,7 @@ public class Game {
 	private DisplayWindow window;
 	private Input input;
 	
-	public int DEFAULT_GRID_SIZE = 5;
+	public int grid_size = 5;
 	public int GRID_SCREEN_OFFSET_X = 300;
 	public int GRID_SCREEN_OFFSET_Y = 100;
 	public int grid_offset_x = 0;
@@ -98,5 +98,12 @@ public class Game {
 
 	public void draw(double elapsedTime) {
 		window.draw(elapsedTime);
+	}
+	
+	public void zeroSettings() {
+		grid_offset_x = 0;
+		grid_offset_y = 0;
+		zoom = 1;
+		gui_scale = 1.0;
 	}
 }
