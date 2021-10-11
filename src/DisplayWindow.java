@@ -104,8 +104,20 @@ public class DisplayWindow extends JFrame implements MouseMotionListener, MouseL
 										graphics.drawString(text, xCoord + gridSize / 2 - metrics.stringWidth(text) / 2, yCoord + gridSize + gridSize / 2 - metrics.getHeight() / 2 - gridSize / 4);
 									}
 									if (col == Color.LIGHT_GRAY) {
-										graphics.drawRect(xCoord, yCoord, gridSize, gridSize);
+										/*if (x > 0 && game.currentImg.getNumber(x, y) != game.currentImg.getNumber(x - 1, y)) {
+											graphics.drawLine(xCoord, yCoord, xCoord, yCoord + gridSize);
+										}
+										if (x < game.currentImg.getWidth() - 1 && game.currentImg.getNumber(x, y) != game.currentImg.getNumber(x + 1, y)) {
+											graphics.drawLine(xCoord + gridSize, yCoord, xCoord + gridSize, yCoord + gridSize);
+										}
+										if (y > 0 && game.currentImg.getNumber(x, y) != game.currentImg.getNumber(x, y - 1)) {
+											graphics.drawLine(xCoord, yCoord, xCoord + gridSize, yCoord);
+										}
+										if (y < game.currentImg.getHeight() - 1 && game.currentImg.getNumber(x, y) != game.currentImg.getNumber(x, y + 1)) {
+											graphics.drawLine(xCoord, yCoord + gridSize, xCoord + gridSize, yCoord + gridSize);
+										}*/
 										graphics.drawString(text, xCoord + gridSize / 2 - metrics.stringWidth(text) / 2, yCoord + gridSize + gridSize / 2 - metrics.getHeight() / 2 - gridSize / 4);
+										graphics.drawRect(xCoord, yCoord, gridSize, gridSize);
 									}
 								}
 						}
@@ -130,8 +142,16 @@ public class DisplayWindow extends JFrame implements MouseMotionListener, MouseL
 				int paletteRectSize = (sidebarWidth - 20) / 4;
 				for (int i = 1; i < game.currentImg.paletteSize(); i++) {
 					graphics.setColor(game.currentImg.paletteColor(i));
-					graphics.fillRect(10 + ((i - 1) * paletteRectSize) % (sidebarWidth - 20), 20 + outlineY + game.currentImg.getHeight() * outlineScale + (int)(((i - 1) * paletteRectSize) / (sidebarWidth - 20)) * paletteRectSize, paletteRectSize, paletteRectSize);
+					graphics.fillRect(10 + ((i - 1) * paletteRectSize) % (sidebarWidth - 20), 40 + outlineY + game.currentImg.getHeight() * outlineScale + (int)(((i - 1) * paletteRectSize) / (sidebarWidth - 20)) * paletteRectSize, paletteRectSize, paletteRectSize);
 				}
+				
+				font = new Font("TimesRoman", Font.PLAIN, 24);
+				graphics.setFont(font);
+				metrics = graphics.getFontMetrics(font);
+				graphics.setColor(Color.BLACK);
+				
+				String text = game.currentImg.getName();
+				graphics.drawString(text, sidebarWidth / 2 - metrics.stringWidth(text) / 2, (int)(20 - 8 + outlineY + game.currentImg.getHeight() * outlineScale + metrics.getHeight() / 2));
 			
 			} catch (Exception e) {
 				//current image was switched mid draw command
@@ -184,7 +204,8 @@ public class DisplayWindow extends JFrame implements MouseMotionListener, MouseL
 			//color the grid space the user clicks on
 			if (xCoord >= 0 && xCoord < game.currentImg.getWidth()
 				&& yCoord >= 0 && yCoord < game.currentImg.getHeight()) {
-					game.currentImg.setGridColor(xCoord, yCoord, game.currentImg.colorToPalette(game.currentImg.getActualColor(xCoord, yCoord)));
+					//game.currentImg.setGridColor(xCoord, yCoord, game.currentImg.colorToPalette(game.currentImg.getActualColor(xCoord, yCoord)));
+					game.currentImg.floodFill(xCoord, yCoord, game.currentImg.colorToPalette(game.currentImg.getActualColor(xCoord, yCoord)));
 			}
 		}
 	}
@@ -205,7 +226,7 @@ public class DisplayWindow extends JFrame implements MouseMotionListener, MouseL
 			String filename = fd.getFile();
 			if (filename != null) {
 				BufferedImage img = ImageIO.read(new File(fd.getDirectory() + filename));
-				game.currentImg = new PaintByNumber(img, 4);
+				game.currentImg = new PaintByNumber(img, 4, filename);
 			}
 			
 			game.zeroSettings();

@@ -27,13 +27,15 @@ public class PaintByNumber {
 	private ArrayList<Color> palette;//colors in image. index = grid number corresponding to color
 	private ArrayList<Color> grayPalette;
 	
+	private String fileName;
 	private int width;
 	private int height;
 	private BufferedImage originalImage;
 	
-	public PaintByNumber(BufferedImage buffImg, int depth) {
+	public PaintByNumber(BufferedImage buffImg, int depth, String fileName) {
 		width = buffImg.getWidth();
 		height = buffImg.getHeight();
+		this.fileName = fileName;
 		originalImage = buffImg;
 		
 		if (width > 100 || height > 100) {
@@ -251,6 +253,10 @@ public class PaintByNumber {
 		return palette.size();
 	}
 	
+	public String getName() {
+		return fileName;
+	}
+	
 	//return the color associated with i
 	public Color paletteColor(int i) {
 		return palette.get(i);
@@ -289,6 +295,25 @@ public class PaintByNumber {
 	//duplicate of setGridColor. we should get rid of one of these.
 	public void setGridNumber(int x, int y, int num) {
 		grid[y][x] = num;
+	}
+	
+	public void floodFill(int x, int y, int num) {
+		if (pixels[y][x] != num || grid[y][x] == num) {
+			return;
+		}
+		grid[y][x] = num;
+		if (x > 0) {
+			floodFill(x - 1, y, num);
+		}
+		if (x < width - 1) {
+			floodFill(x + 1, y, num);
+		}
+		if (y > 0) {
+			floodFill(x, y - 1, num);
+		}
+		if (y < height - 1) {
+			floodFill(x, y + 1, num);
+		}
 	}
 	/**
 	 * Takes a BufferedImage object and a filter/kernel to use and applies the filter to that image
