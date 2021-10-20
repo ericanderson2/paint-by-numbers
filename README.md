@@ -4,7 +4,7 @@ A paint by numbers video game created in Java.
 
 ## MVP Demo
 
-To try out this project, follow these steps:
+To try out this project, follow the following steps and then fill out [this feedback survey](https://forms.gle/AhEX5FMFmoHsNbpy9):
 
 Clone the repository to your machine. You will need to install Java to run this program.
 
