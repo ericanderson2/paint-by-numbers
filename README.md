@@ -1,10 +1,12 @@
 # Paint by Numbers (CSC Hacks)
 
+[Submission video here!](https://youtu.be/BNOrZpGQU5M)
+
 A paint by numbers video game created in Java.
 
-## MVP Demo
+## How to use
 
-To try out this project, follow the following steps and then fill out [this feedback survey](https://forms.gle/AhEX5FMFmoHsNbpy9):
+To try out this project, follow the steps below:
 
 Clone the repository to your machine. You will need to install Java to run this program.
 
